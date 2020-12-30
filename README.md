@@ -1,4 +1,4 @@
-# Sherbet
+# 🍧 Sherbet
 High performance image manipulation server
 
 ### Architecture
