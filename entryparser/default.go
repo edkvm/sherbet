@@ -1,6 +1,7 @@
 package entryparser
 
 import (
+	"log"
 	"net/http"
 	"strings"
 )
@@ -14,7 +15,7 @@ func NewOpEngineMiddelware() http.Handler {
 		if accept != "" && strings.Contains(accept, "image/webp") {
 
 		}
-
+		log.Println("parser=thumbor", "cmd=", rawCmd)
 		// TODO(edkvm): Move webP to system Env
 		output(rawCmd, w)
 		return

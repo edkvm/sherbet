@@ -2,28 +2,23 @@ package entryparser
 
 import (
 	"fmt"
-	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/julienschmidt/httprouter"
 )
 
-
 type RubyParser struct {
-
 }
 
-// TODO(edkvm): Move to file
 func NewHTTPRubyParserMiddelware() http.Handler {
 	router := httprouter.New()
 	parser := RubyParser{}
 	router.GET("/process", parser.handleProcess())
 	router.GET("/resize", parser.handleResize())
 	router.GET("/crop", parser.handleCrop())
-
-
-
 
 	return router
 }
@@ -36,6 +31,15 @@ func (pr RubyParser) handleProcess() func(http.ResponseWriter, *http.Request, ht
 			return
 		}
 
+		// Image Format
+		accept := r.Header.Get("Accept")
+
+		if accept != "" && strings.Contains(accept, "image/webp") {
+			rawCmdChain = append(rawCmdChain, "format(webp)")
+		} else {
+			rawCmdChain = append(rawCmdChain, "format(jpeg)")
+		}
+
 		log.Println("parser=ruby", "cmd=", rawCmdChain)
 		output(rawCmdChain, w)
 	}
@@ -43,9 +47,6 @@ func (pr RubyParser) handleProcess() func(http.ResponseWriter, *http.Request, ht
 
 func (pr RubyParser) handleResize() func(http.ResponseWriter, *http.Request, httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
-
-
 		rawCmdChain, err := pr.ParseResizeQuery(r)
 		if err != nil {
 			http.Error(w, "", http.StatusBadRequest)
@@ -70,7 +71,6 @@ func (pr RubyParser) handleCrop() func(http.ResponseWriter, *http.Request, httpr
 		output(rawCmdChain, w)
 	}
 }
-
 
 func fnZero(s string) string {
 	if s == "" {
@@ -104,15 +104,6 @@ func (rp RubyParser) ParseCropQuery(r *http.Request) ([]string, error) {
 		),
 	)
 
-
-
-	// Image Format
-	accept := r.Header.Get("Accept")
-
-	if accept != "" && strings.Contains(accept, "image/webp") {
-		//rawCmd = append(rawCmd, "format(webp)")
-	}
-
 	return rawCmd, nil
 }
 
@@ -132,20 +123,11 @@ func (rp RubyParser) ParseResizeQuery(r *http.Request) ([]string, error) {
 
 	// Crop always relative
 	rawCmd = append(rawCmd,
-		fmt.Sprintf("resize(%sx%s:%sx%s)",
+		fmt.Sprintf("resize(%sx%s)",
 			fnZero(q.Get("width")),
 			fnZero(q.Get("height")),
 		),
 	)
-
-
-
-	// Image Format
-	accept := r.Header.Get("Accept")
-
-	if accept != "" && strings.Contains(accept, "image/webp") {
-		//rawCmd = append(rawCmd, "format(webp)")
-	}
 
 	return rawCmd, nil
 }
@@ -158,7 +140,7 @@ func (rp RubyParser) ParseProcessQuery(r *http.Request) ([]string, error) {
 	if paramURL == "" {
 		return nil, fmt.Errorf("d")
 	}
-	
+
 	rawCmd := make([]string, 0)
 
 	// URL
@@ -197,13 +179,6 @@ func (rp RubyParser) ParseProcessQuery(r *http.Request) ([]string, error) {
 		}
 	}
 	// Quality
-
-	// Image Format
-	accept := r.Header.Get("Accept")
-
-	if accept != "" && strings.Contains(accept, "image/webp") {
-		//rawCmd = append(rawCmd, "format(webp)")
-	}
 
 	return rawCmd, nil
 }

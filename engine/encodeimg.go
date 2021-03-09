@@ -6,6 +6,7 @@ import (
 	"github.com/chai2010/webp"
 	"image"
 	"image/jpeg"
+	"log"
 )
 
 type Encoding uint8
@@ -41,7 +42,8 @@ func jpegEncode(src image.Image) ([]byte, error) {
 func webpEncode(src image.Image) ([]byte, error) {
 	buf := &bytes.Buffer{}
 
-	err := webp.Encode(buf, src, &webp.Options{Lossless: true})
+	log.Println("Encode webp")
+	err := webp.Encode(buf, src, &webp.Options{Lossless: false, Quality: 80})
 	if err != nil {
 		return nil, err
 	}

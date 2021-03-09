@@ -2,14 +2,16 @@ package entryparser
 
 import (
 	"fmt"
-	"github.com/edkvm/sherbet/engine"
 	"log"
 	"net/http"
+
+	"github.com/edkvm/sherbet/engine"
 )
 
 func output(rawCmd []string, w http.ResponseWriter) {
 
 	cmd, err := engine.BuildCmdChain(rawCmd)
+
 	if err != nil {
 		log.Println("err_msg=", err.Error())
 		http.Error(w, "", http.StatusInternalServerError)

@@ -134,6 +134,7 @@ func securityMiddlewareBuilder(key, salt string) func(next http.Handler) http.Ha
 	}
 }
 
+// TODO: Move to conf file
 func cacheHeadersMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		currentTime := time.Now().UTC()

@@ -68,6 +68,14 @@ func generateOps() {
 		},
 	}
 
+	ops["format"] = Op{
+		Name: "format",
+		Perform: func(src image.Image, param string) (image.Image, error) {
+			log.Println("Format: ", param)
+			return fetch(nil, param)
+		},
+	}
+
 	ops["noop"] = Op{
 		Name: "noop",
 		Perform: func(src image.Image, param string) (image.Image, error) {

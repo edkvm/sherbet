@@ -20,9 +20,13 @@ func Execute(cmdList []cmd) ([]byte, error) {
 	// TODO(ekiselman): Convert this to an op as well
 	// TODO(ekiselman): Add struct to hold []byte
 	// inroder not to pass the memory around so much
+	var cmdEncode cmd
+	for i, cmd := range cmdList {
+		if cmd.op.Name == "format" {
 
-	for _, cmd := range cmdList {
-
+			cmdEncode = cmdList[i]
+			continue
+		}
 		result, err := opRunner(cmd.op, cmd.param, img)
 		if err != nil {
 			return nil, err
@@ -38,8 +42,14 @@ func Execute(cmdList []cmd) ([]byte, error) {
 		return nil, fmt.Errorf("Image is nil")
 	}
 
-	// TODO(ekiselman): Move this outside of the engine
+	// TODO(edkvm): Move this outside of the engine
 	encode := JPEG
+	log.Println("enc", cmdEncode)
+	if cmdEncode.param == "webp" {
+		encode = WebP
+
+	}
+
 
 	result, err := Encode(encode, img)
 	if err != nil {
@@ -48,8 +58,6 @@ func Execute(cmdList []cmd) ([]byte, error) {
 
 	return result, nil
 }
-
-
 
 func opRunner(op *Op, param string, src image.Image) (image.Image, error) {
 	defer func(then time.Time) {

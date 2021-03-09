@@ -104,13 +104,16 @@ func parseAnchor(raw string) (imaging.Anchor) {
 
 	return anchor
 }
+
 func parseOp(raw string) (*Op, string, error) {
 	reNumber := `[|\d]*[|\.]{0,1}\d{0,32}`
+	outFormat := `webp|jpeg`
 	opMatchers := map[string]*regexp.Regexp{
 		"fetch": regexp.MustCompile(`^fetch\((?P<url>.*)\)$`),
 		"resize": regexp.MustCompile(fmt.Sprintf(`^resize\((?P<size>%sx%s)\)$`, reNumber, reNumber)),
 		"fill": regexp.MustCompile(fmt.Sprintf(`^fill\((?P<size>%sx%s,\w*)\)$`, reNumber, reNumber)),
 		"crop":   regexp.MustCompile(fmt.Sprintf(`^crop\((?P<crop>%sx%s:%sx%s)\)$`, reNumber, reNumber, reNumber, reNumber)),
+		"format":   regexp.MustCompile(fmt.Sprintf(`^format\((?P<format>%s)\)$`, outFormat)),
 	}
 
 	params := ""
@@ -122,14 +125,13 @@ func parseOp(raw string) (*Op, string, error) {
 			tmp := GetOp(opName)
 			op = &tmp
 			params = match[0][1]
-
 			break
 		}
 
 	}
 
 	if op == nil {
-		return nil, "", fmt.Errorf("could not parse command")
+		return nil, "", fmt.Errorf("could not parse command %s", raw)
 	}
 
 	return op, params, nil
