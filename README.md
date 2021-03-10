@@ -1,3 +1,4 @@
+
 # 🍧 Sherbet
 High performance image manipulation server
 
@@ -10,6 +11,7 @@ High performance image manipulation server
  Parser 2            --> |             |     |        |
                          |-------------|     |--------|   
 ```
+![Blank diagram - Page 10](https://user-images.githubusercontent.com/661693/110565676-d5257000-811c-11eb-9e34-4d6be8266cb4.png)
 
 ### Supported parsers
 
