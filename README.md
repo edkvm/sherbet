@@ -46,4 +46,7 @@ Query Params
 
 
 
+## Roadmap
++ Add imgix
+
 
