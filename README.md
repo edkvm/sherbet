@@ -48,5 +48,5 @@ Query Params
 
 ## Roadmap
 + Add imgix
-
++ Add thumbor
 
